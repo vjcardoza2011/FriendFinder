@@ -51,7 +51,7 @@ var friends = [
     "name": "Brad Pitt",
     "photo":
       "https://www.goldderby.com/wp-content/uploads/2018/12/Brad-Pitt-movies-ranked.jpg",
-    "answers": ["1", "4", "5", "2", "2", "5", "2", "4", "3", "4"]
+    "answers": [1, 4, 5, 2, 2, 5, 2, 4, 3, 4]
   },
   {
     "name": "Jennifer Anniston",
@@ -60,4 +60,4 @@ var friends = [
     "answers": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
   }
 ];
-
+module.exports = friends;
