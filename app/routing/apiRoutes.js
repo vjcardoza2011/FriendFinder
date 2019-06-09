@@ -1,58 +1,58 @@
-var fs = require("fs");
+var friends = require('../data/friends.js');
 
-module.exports = function (app, path) {
-  // A GET route with the url `/api/friends`. This will be used to display a JSON of all possible friends.
-  app.get("/api/friends", function (req, res) {
-    fs.readFile("app/data/friends.js", "utf8", function (err, data) {
-      if (err) {
-        return console.log(err);
+module.exports = function (app) {
+  // api path to get the friends data
+  app.get('/api/friends', function (req, res) {
+    res.json(friends);
+  });
+
+  // updates an array of friends "database" array and sends back the json form of the most compatible new friend
+  app.post('/api/friends', function (req, res) {
+
+    var newFriend = req.body;
+
+    // compute best match from answers
+    var bestMatch = {};
+
+    for (var i = 0; i < newFriend.answers.length; i++) {
+      if (newFriend.answers[i] == "1 (Strongly Disagree)") {
+        newFriend.answers[i] = 1;
+      } else if (newFriend.answers[i] == "5 (Strongly Agree)") {
+        newFriend.answers[i] = 5;
       } else {
-        res.json(JSON.parse(data));
+        newFriend.answers[i] = parseInt(newFriend.answers[i]);
       }
-    });
-  });
+    }
 
-  // A POST routes `/api/friends`. This will be used to handle incoming survey results. This route will also be used to handle the compatibility logic.
-  app.post("/api/friends", function (req, res) {
-    // Object for the closest match
-    var results = [];
 
-    // String of JSON information
-    var postResponse = JSON.stringify(req.body);
+    var bestMatchIndex = 0;
+    //greatest score difference for a question is 4, therefore greatest difference is 4 times # of questions in survey
+    var bestMatchDifference = 40;
 
-    fs.readFile("app/data/friends.js", function (err, data) {
-      // Read the existing array
-      var friendFile = JSON.parse(data);
+    for (var i = 0; i < friends.length; i++) {
+      var totalDifference = 0;
 
-      // Store the difference in values
-      var closestMatch = 0;
-      var matchScore = 999999999999999;
-
-      // This For Loop will loop through the file to find the closest match
-      for (var i = 0; i < friendFile.length; i++) {
-        var spaceBetween = 0;
-        for (var j = 0; j < friendFile[i]["answers[]"].length; j++) {
-          spaceBetween += Math.abs(
-            parseInt(req.body["answers[]"][j]) -
-            parseInt(friendFile[i]["answers[]"][j])
-          );
-        }
-
-        // If statement will check to see if the space between the current listing is the closest to the user, update the closestMatch
-        if (spaceBetween <= matchScore) {
-          matchScore = spaceBetween;
-          closestMatch = i;
-        }
+      for (var index = 0; index < friends[i].answers.length; index++) {
+        var differenceOneScore = Math.abs(friends[i].answers[index] - newFriend.answers[index]);
+        totalDifference += differenceOneScore;
       }
 
-      results.push(friendFile[closestMatch]);
+      // if the totalDifference in answers is less than the best match so far
+      // save that index and difference
+      if (totalDifference < bestMatchDifference) {
+        bestMatchIndex = i;
+        bestMatchDifference = totalDifference;
+      }
+    }
 
-      // Add the new person to the existing array
-      friendFile.push(JSON.parse(postResponse));
+    // the best match index is used to get the best match data from the friends index
+    bestMatch = friends[bestMatchIndex];
 
-      // Pushes back the entire updated result
-      fs.writeFile("app/data/friends.js", JSON.stringify(friendFile));
-      res.send(results[0]);
-    });
+    // Push new friend from survey in "database" array
+    friends.push(newFriend);
+
+    // return the best match friend
+    res.json(bestMatch);
   });
+
 };

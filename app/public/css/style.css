@@ -1,18 +1,14 @@
 body {
   background-image: url("https://images.pexels.com/photos/715807/pexels-photo-715807.png?auto=format%2Ccompress&cs=tinysrgb&dpr=1&w=500");
   background-size: 100%;
-  color: #cf3030;
-}
-
-#title-survey {
-  color: rgb(3, 3, 184);
+  color: #861a1a;
 }
 
 footer {
   color: black;
 }
 
-#submitButton {
+#submit {
   width: 100%;
   margin: 25px 0;
   line-height: 200%;
@@ -20,7 +16,6 @@ footer {
 
 h3 {
   font-weight: bold;
-  color: black;
 }
 
 p {
