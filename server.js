@@ -14,10 +14,11 @@ app.use(bodyParser.json());
 // Static files
 app.use(express.static("app/public"));
 
-// Router
+// Routes
 require("./app/routing/apiRoutes.js")(app, path);
 require("./app/routing/htmlRoutes.js")(app, path);
 
-app.listen(PORT, function() {
+//Listener
+app.listen(PORT, function () {
   console.log("Listening... on port " + PORT);
 });
